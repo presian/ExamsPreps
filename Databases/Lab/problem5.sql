@@ -12,4 +12,4 @@ JOIN Categories c
 on q.CategoryId = c.Id
 JOIN Users u
 ON a.UserId = u.Id
-ORDER BY c.Name, a.QuestionId
+ORDER BY c.Name, u.Username, a.CreatedOn
