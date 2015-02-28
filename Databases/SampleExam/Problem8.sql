@@ -1,4 +1,4 @@
-SELECT
-	MIN([Date]) AS [MinDate],
-	MAX([Date]) AS [MaxDate]
+SELECT 
+	MIN(Date) AS MinDate,
+	MAX(Date) AS MaxDate
 FROM Ads

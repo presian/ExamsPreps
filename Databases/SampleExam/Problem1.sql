@@ -1,5 +1,4 @@
-USE Ads
-GO
-SELECT Title 
-FROM [Ads].[dbo].[Ads]
-ORDER BY Title ASC
+SELECT 
+	Title
+FROM Ads
+ORDER BY Title

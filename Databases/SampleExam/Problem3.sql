@@ -1,9 +1,9 @@
 SELECT
-	[Title],
-	[Date],
-	CASE 
-		WHEN ([ImageDataURL] IS NULL) THEN 'yes'
-		WHEN ([ImageDataURL] IS NOT NULL) THEN 'no'
+	a.Title,
+	a.[Date],
+	CASE
+		WHEN a.ImageDataURL IS NULL THEN 'no'
+		ELSE 'yes'
 	END AS [Has Image]
-FROM Ads
-ORDER BY Id
+FROM Ads a
+ORDER BY a.Id

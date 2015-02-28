@@ -1,21 +1,16 @@
-USE Ads
-
-----------
----16.1
-----------
+--1--
 GO
 CREATE TABLE Countries(
-Id int primary key identity not null,
-Name nvarchar (100) not null
+Id int primary key identity,
+Name nvarchar(max)
 )
-GO
-ALTER table Towns
-add CountryId int null foreign key references Countries(Id)
-GO
 
----------
---16.2
----------
+GO
+alter table Towns
+add CountryId int foreign key references Countries(Id)
+
+--2--
+GO
 INSERT INTO Countries (Name)
 	VALUES ('Bulgaria'), ('Germany'), ('France')
 UPDATE Towns
@@ -54,76 +49,56 @@ INSERT INTO Towns
 	WHERE Name = 'France'))
 
 
----------
---16.3
----------
+--3--
+GO
 UPDATE Ads
 SET TownId = (SELECT
 	t.Id
 FROM Towns t
 WHERE t.Name = 'Paris')
-WHERE DATENAME(WEEKDAY, [Date]) = 'Friday'
+WHERE DATENAME(WEEKDAY, Date) = 'Friday'
 
-
----------
---16.4
----------
+--4--
+GO
 UPDATE Ads
 SET TownId = (SELECT
 	t.Id
 FROM Towns t
 WHERE t.Name = 'Hamburg')
-WHERE DATENAME(WEEKDAY, [Date]) = 'Thursday'
+WHERE DATENAME(WEEKDAY, Date) = 'Thursday'
 
-
---------------------------
---16.5
---------------------------
+--5--
+GO
 DELETE Ads
 WHERE OwnerId IN (SELECT
 		u.Id
 	FROM AspNetUsers u
-	JOIN AspNetUserRoles ur
+	LEFT JOIN AspNetUserRoles ur
 		ON u.Id = ur.UserId
-	JOIN AspNetRoles r
+	LEFT JOIN AspNetRoles r
 		ON ur.RoleId = r.Id
 	WHERE r.Name = 'Partner')
 
+--6--
+INSERT INTO Ads (Title, Text, ImageDataURL, OwnerId, CategoryId, TownId, Date, StatusId)
+	VALUES ('Free Book', 'Free C# Book', NULL, (SELECT
+		u.Id
+	FROM AspNetUsers u
+	WHERE u.UserName = 'nakov')
+	, NULL, NULL, GETDATE(), (SELECT
+		s.Id
+	FROM AdStatuses s
+	WHERE s.Status = 'Waiting Approval'))
 
------------------------
---16.6
------------------------
-INSERT INTO Ads (Title,
-[Text],
-ImageDataURL,
-[Date],
-OwnerId,
-StatusId)
-	VALUES ('Free Book',
-	'Free C# Book',
-	NULL,
-	GETDATE(), (SELECT
-		Id
-	FROM AspNetUsers
-	WHERE UserName = 'nakov')
-	, (SELECT
-		Id
-	FROM AdStatuses
-	WHERE [Status] = 'Waiting Approval'))
-
-
--------------------
---16.7
--------------------
+--7--
 SELECT
 	t.Name AS Town,
 	c.Name AS Country,
 	COUNT(a.Id) AS AdsCount
-FROM Towns t
-FULL OUTER JOIN Ads a
+FROM Ads a
+FULL JOIN Towns t
 	ON a.TownId = t.Id
-FULL OUTER JOIN Countries c
+full JOIN Countries c
 	ON t.CountryId = c.Id
-GROUP BY	t.Name,
-			c.Name
-ORDER BY Town, Country
+GROUP BY t.Name, c.Name
+ORDER BY t.Name, c.Name

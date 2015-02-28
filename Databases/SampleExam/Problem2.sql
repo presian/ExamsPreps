@@ -1,7 +1,6 @@
-SELECT
-	[Title],
+SELECT 
+	Title,
 	[Date]
-FROM [Ads].[dbo].[Ads]
-WHERE [Date] <= CONVERT(DATETIME, '2015-01-01 23:59:59', 120)
-AND [Date] >= CONVERT(DATETIME, '2014-12-26 00:00:00', 120)
+FROM Ads
+WHERE [Date] BETWEEN '2014/12/26' AND '2015/01/02'
 ORDER BY [Date]

@@ -1,14 +1,21 @@
-SELECT
-  u.UserName,
-  COUNT(a.Id) as AdsCount,
-  CASE MIN(r.Name)
-	WHEN 'Administrator' THEN 'yes'
-	ELSE 'no'
-  END as IsAdministrator
-FROM
-  AspNetUsers u
-  LEFT JOIN Ads a ON a.OwnerId = u.Id
-  LEFT JOIN AspNetUserRoles ur ON ur.UserId = u.Id
-  LEFT JOIN AspNetRoles r ON (ur.RoleId = r.Id AND r.Name='Administrator')
-GROUP BY u.UserName
+SELECT 
+	u.UserName,
+	COUNT(a.Id) AS [AdsCount],
+	CASE
+		WHEN admins.UserName IS NULL THEN 'no'
+		ELSE 'yes'
+	END AS [IsAdministrator]
+FROM AspNetUsers u
+LEFT JOIN Ads a
+ON u.Id = a.OwnerId
+LEFT JOIN (SELECT DISTINCT
+	u.UserName
+FROM AspNetUsers u
+left JOIN AspNetUserRoles ur
+	ON u.Id = ur.UserId
+left JOIN AspNetRoles r
+	ON ur.RoleId = r.Id
+WHERE r.Name = 'Administrator') as admins 
+ON u.UserName = admins.UserName 
+GROUP BY u.UserName, admins.UserName
 ORDER BY u.UserName

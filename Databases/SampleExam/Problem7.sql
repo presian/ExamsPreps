@@ -1,15 +1,18 @@
 SELECT
 	a.Title,
-	c.Name AS [CategoryName],
-	t.Name AS [TownName],
-	s.[Status] AS [Status]
+	c.Name AS CategoryName,
+	t.Name AS TownName,
+	s.[Status]
 FROM Ads a
-JOIN Categories c
+LEFT JOIN Categories c
 	ON a.CategoryId = c.Id
-JOIN Towns t
+LEFT JOIN Towns t
 	ON a.TownId = t.Id
 JOIN AdStatuses s
 	ON a.StatusId = s.Id
-WHERE t.Name IN ('Blagoevgrad', 'Stara Zagora', 'Sofia')
-AND s.[Status] = 'Published'
+WHERE a.StatusId = (SELECT
+	Id
+FROM AdStatuses
+WHERE Status = 'Published')
+AND t.Name IN ('Sofia', 'Blagoevgrad', 'Stara Zagora')
 ORDER BY a.Title
